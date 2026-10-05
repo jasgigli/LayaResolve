@@ -2,6 +2,12 @@
 // LayaResolve Frontend Application Logic
 // ==========================================================================
 
+// Determine API Base URL dynamically so it works on http://localhost:8000, 
+// Live Server (e.g. port 5500), file protocol, or remote tunnel.
+const API_BASE = (window.location.protocol === "file:" || (window.location.port && window.location.port !== "8000"))
+  ? "http://127.0.0.1:8000"
+  : "";
+
 document.addEventListener("DOMContentLoaded", () => {
   initTabs();
   loadSystemStatus();
@@ -37,7 +43,7 @@ function initTabs() {
 // System Status Check
 async function loadSystemStatus() {
   try {
-    const res = await fetch("/api/status");
+    const res = await fetch(`${API_BASE}/api/status`);
     if (!res.ok) return;
     const data = await res.json();
     const sys = data.system;
@@ -53,7 +59,7 @@ async function loadSystemStatus() {
 // Load Benchmark Problems
 async function loadBenchmarkExamples() {
   try {
-    const res = await fetch("/api/examples");
+    const res = await fetch(`${API_BASE}/api/examples`);
     if (!res.ok) return;
     benchmarkExamples = await res.json();
 
@@ -122,7 +128,20 @@ async function runTriagePipeline(fullSolve = false) {
   }
 
   const pill = document.getElementById("triage-status-pill");
-  pill.textContent = "Processing with Laya...";
+  const btnTriage = document.getElementById("btn-triage-only");
+  const btnSolve = document.getElementById("btn-solve-pipeline");
+
+  // Disable buttons & show loading
+  btnTriage.disabled = true;
+  btnSolve.disabled = true;
+
+  if (fullSolve) {
+    btnSolve.innerHTML = `<span class="btn-icon">⏳</span> Solving with Laya Engine...`;
+    pill.textContent = "Executing Full Resolution Pipeline...";
+  } else {
+    btnTriage.innerHTML = `<span class="btn-icon">⏳</span> Evaluating Triage Heads...`;
+    pill.textContent = "Evaluating Multi-Head Decisions...";
+  }
   pill.className = "badge active-badge";
 
   const payload = {
@@ -135,7 +154,7 @@ async function runTriagePipeline(fullSolve = false) {
   try {
     if (fullSolve) {
       // Execute full pipeline
-      const res = await fetch("/api/solve", {
+      const res = await fetch(`${API_BASE}/api/solve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -149,7 +168,7 @@ async function runTriagePipeline(fullSolve = false) {
       pill.className = "badge verified-badge";
     } else {
       // Triage only
-      const res = await fetch("/api/triage", {
+      const res = await fetch(`${API_BASE}/api/triage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -167,6 +186,12 @@ async function runTriagePipeline(fullSolve = false) {
     alert(`Error running Laya: ${err.message}`);
     pill.textContent = "Error";
     pill.className = "badge ready-badge";
+  } finally {
+    // Restore button states
+    btnTriage.disabled = false;
+    btnSolve.disabled = false;
+    btnTriage.innerHTML = `<span class="btn-icon">⚡</span> Run Laya Triage Only (~200ms)`;
+    btnSolve.innerHTML = `<span class="btn-icon">🚀</span> Execute Full Solver Pipeline`;
   }
 }
 
@@ -323,7 +348,7 @@ function setupPlaygroundEvents() {
       btn.textContent = "Executing Inference...";
       btn.disabled = true;
 
-      const res = await fetch("/api/custom-decide", {
+      const res = await fetch(`${API_BASE}/api/custom-decide`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ state, questions })
@@ -353,7 +378,7 @@ function setupEvalEvents() {
     btn.disabled = true;
 
     try {
-      const res = await fetch("/api/eval", { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/eval`, { method: "POST" });
       if (!res.ok) throw new Error(await res.text());
       const report = await res.json();
 

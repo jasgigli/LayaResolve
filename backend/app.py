@@ -217,6 +217,25 @@ def run_evaluation():
 
 # Static file serving for Frontend
 frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+
+@app.get("/style.css")
+def serve_style():
+    css_path = os.path.join(frontend_dir, "style.css")
+    if os.path.exists(css_path):
+        return FileResponse(css_path, media_type="text/css")
+    raise HTTPException(status_code=404, detail="style.css not found")
+
+@app.get("/app.js")
+def serve_script():
+    js_path = os.path.join(frontend_dir, "app.js")
+    if os.path.exists(js_path):
+        return FileResponse(js_path, media_type="application/javascript")
+    raise HTTPException(status_code=404, detail="app.js not found")
+
+@app.get("/favicon.ico")
+def serve_favicon():
+    return FileResponse(os.path.join(frontend_dir, "favicon.ico"), status_code=204) if not os.path.exists(os.path.join(frontend_dir, "favicon.ico")) else FileResponse(os.path.join(frontend_dir, "favicon.ico"))
+
 if os.path.exists(frontend_dir):
     app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
 
