@@ -48,9 +48,11 @@ async function loadSystemStatus() {
     const data = await res.json();
     const sys = data.system;
 
-    document.getElementById("nav-model-name").textContent = "convaiinnovations/laya";
-    document.getElementById("nav-device-spec").textContent = `${sys.device} • RAM: ${sys.available_ram_gb}GB Free`;
-    document.getElementById("footer-specs").textContent = `${sys.os} • ${sys.device} • Free Disk: ${sys.disk_free_gb}GB`;
+    const navModel = document.getElementById("nav-model-name");
+    if (navModel) navModel.textContent = "convaiinnovations/laya";
+
+    const navDev = document.getElementById("nav-device-spec");
+    if (navDev) navDev.textContent = `${sys.device || "CPU"} • Local Offline`;
   } catch (err) {
     console.warn("Could not fetch system status:", err);
   }

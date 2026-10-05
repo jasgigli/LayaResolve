@@ -3,160 +3,264 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](https://python.org)
 [![Model: convaiinnovations/laya](https://img.shields.io/badge/Model-convaiinnovations%2Flaya-purple.svg)](https://huggingface.co/convaiinnovations/laya)
-[![Architecture: Non--Autoregressive](https://img.shields.io/badge/Architecture-ModernBERT--Large-orange.svg)](#architecture)
+[![Author: Junaid Ali Shah Gilgiti](https://img.shields.io/badge/Author-Junaid_Ali_Shah_Gilgiti-indigo.svg)](https://github.com/junaidalishahgilgiti)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-LayaResolve-black.svg?logo=github)](https://github.com/junaidalishahgilgiti/LayaResolve)
 
-> **LayaResolve** is an open-source, high-speed problem triage, dynamic routing, and autonomous resolution engine powered by the **Laya AI decision model family** (`convaiinnovations/laya`).
+> **LayaResolve** is an open-source, high-speed problem triage, dynamic routing, and autonomous resolution engine powered by the **Laya AI decision model family** (`convaiinnovations/laya`) from Convai Innovations.
 
-Unlike traditional generative LLMs that waste seconds streaming token-by-token JSON (risking schema drift, hallucinations, and high cloud API bills), LayaResolve leverages **non-autoregressive bidirectional encoder decision heads** to triage incoming issues in milliseconds, score urgency/complexity, enforce safety abstention thresholds, and dispatch problems to specialized autonomous solvers.
+Developed and maintained by **[Junaid Ali Shah Gilgiti](https://github.com/junaidalishahgilgiti)**.
 
 ---
 
-## 🏛️ System Architecture
+## 📖 Overview: How the AI & Application Work
+
+Traditional generative Large Language Models (LLMs) generate output token-by-token. For structured decision making and problem routing, generative LLMs suffer from:
+1. **High Latency & Token Costs**: Streaming 500 tokens of JSON takes 2–4 seconds and costs recurring API credits.
+2. **Schema Drift & Hallucinations**: JSON parsing can fail unexpectedly due to missing braces, extra markdown commentary, or hallucinated enum labels.
+3. **Uncalibrated Confidence**: LLMs often generate wrong answers with equal assertiveness, making automated safety gating difficult.
+
+**LayaResolve solves this using a non-autoregressive decision pipeline:**
 
 ```mermaid
-flowchart TD
-    Problem["Input Problem Statement / Logs / Query"] --> Formatter["State Formatter"]
+flowchart LR
+    State["1. Problem State<br>(Logs, Code, Tickets)"] --> LayaCore["2. Laya Decision Engine<br>(ModernBERT-Large Encoder)"]
     
-    subgraph LayaCore ["Laya AI Decision Engine (ModernBERT-Large)"]
-        direction TB
-        Head1["Choice Head: Domain Classification"]
-        Head2["Score Head: Urgency Rubric (0 to 2)"]
-        Head3["Score Head: Technical Difficulty (0 to 2)"]
-        Head4["Noul Head: Security & Sensitivity Risk P(true)"]
-        Head5["Noul Head: Tool Execution Requirement P(true)"]
+    subgraph Heads ["Bounded Decision Heads"]
+        H1["Choice Head: Domain Triage"]
+        H2["Score Head: Urgency Rubric"]
+        H3["Score Head: Complexity Rating"]
+        H4["Noul Head: Security Risk P(true)"]
+        H5["Noul Head: External Tools P(true)"]
     end
     
-    Formatter --> LayaCore
+    LayaCore --> Heads
+    Heads --> Gate{"3. Calibrated Abstention Gate<br>(Min Confidence Threshold)"}
     
-    LayaCore --> ConfidenceGate{"Confidence & Abstention Gate"}
+    Gate -- "Uncertain / Borderline" --> Human["⚠️ Flag for Human Review"]
+    Gate -- "Passed Threshold" --> Dispatch["4. Multi-Solver Dispatch"]
     
-    ConfidenceGate -- "Confidence < Threshold (e.g. 60%)" --> HumanReview["⚠️ Human Review / Clarification Recommended"]
-    ConfidenceGate -- "Passed Threshold" --> Router["Dynamic Multi-Solver Dispatcher"]
-    
-    subgraph Solvers ["Domain Solver Cluster"]
-        Router -- "code_bug" --> S1["CodeBugSolver (Defensive Patches & Tests)"]
-        Router -- "devops_infra" --> S2["DevOpsIncidentSolver (502, OOM, K8s Recovery)"]
-        Router -- "billing_account" --> S3["BillingAndAccountSolver (Dispute & Reversal)"]
-        Router -- "security_threat" --> S4["SecurityAuditSolver (SQLi, Secret Revocation)"]
-        Router -- "data_logic" --> S5["GeneralLogicSolver (Constraint Resolution)"]
+    subgraph Solvers ["Autonomous Domain Solvers"]
+        Dispatch --> S1["CodeBugSolver"]
+        Dispatch --> S2["DevOpsIncidentSolver"]
+        Dispatch --> S3["BillingAndAccountSolver"]
+        Dispatch --> S4["SecurityAuditSolver"]
+        Dispatch --> S5["GeneralLogicSolver"]
     end
     
-    S1 --> DraftSolution["Draft Resolution & Patch"]
-    S2 --> DraftSolution
-    S3 --> DraftSolution
-    S4 --> DraftSolution
-    S5 --> DraftSolution
+    S1 --> Verify["5. Laya Solution Guardrail & Verification"]
+    S2 --> Verify
+    S3 --> Verify
+    S4 --> Verify
+    S5 --> Verify
     
-    DraftSolution --> LayaVerifier["🛡️ Laya Solution Guardrail & Verification"]
-    LayaVerifier --> VerifiedOutput["✅ Final Verified Resolution to User"]
+    Verify --> Output["6. Verified Resolution & Patch"]
 ```
 
----
-
-## ✨ Key Features
-
-* **Sub-Second Local CPU Inference**: Powered by ModernBERT-large (~421M parameters). Runs completely offline on standard laptops/servers without dedicated GPU requirements.
-* **Three Typed Decision Primitives**:
-  * **`choice`**: Discrete category selection with strict operational definitions (Code, DevOps, Billing, Security, Logic).
-  * **`score`**: Ordered rubric rating for urgency (`routine` $\rightarrow$ `elevated` $\rightarrow$ `blocking`) and difficulty.
-  * **`noul`**: Direct calibrated probability estimation $P(\text{true})$ for binary safety/risk propositions.
-* **Calibrated Selective Abstention**: Automatically flags borderline or ambiguous problems for human review instead of making confident wrong guesses.
-* **Autonomous Multi-Domain Solvers**: Built-in resolution engines for code bugs, infrastructure failures, billing audits, and security vulnerability remediations.
-* **Secondary Solution Verification**: Uses Laya to evaluate generated solutions against the original constraints to ensure safety and completeness before dispatch.
-* **Stunning Web Dashboard**: Cybernetic dark-mode UI with live animated probability distributions, interactive model playground, and batch evaluation suite.
+### The 3 Core Decision Primitives in Laya
+* **`choice`**: Selects from a fixed set of named options based on explicit criteria (e.g. routing to `code_bug`, `devops_infra`, `billing_account`, `security_threat`, or `data_logic`).
+* **`score`**: Rates an input along an ordered rubric (e.g. urgency: `routine` &rarr; `elevated` &rarr; `blocking`).
+* **`noul`**: Evaluates the probability $P(\text{true})$ of a stated binary hypothesis (e.g. *"Does this introduce critical security risks?"* or *"Does the user threaten cancellation?"*).
 
 ---
 
-## 🚀 Quickstart
+## 🚀 Installation & Setup Guide
 
-### Prerequisites
-* Python 3.10 or newer (tested on Python 3.11, 3.12, 3.13, 3.14)
-* 4GB+ RAM (model uses ~800MB in memory)
+### System Requirements
+* **Python**: Version `3.10` or newer
+* **RAM**: 4 GB or higher (the model weights use ~800 MB in memory)
+* **Compute**: Runs on standard CPU (Intel, AMD, Apple Silicon) or NVIDIA GPU (CUDA)
+* **OS**: Linux, macOS, or Windows
 
-### 1. Clone & Install
+---
+
+### Method 1: Local Python Setup (Recommended)
+
+#### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/your-org/LayaResolve.git
+git clone https://github.com/junaidalishahgilgiti/LayaResolve.git
 cd LayaResolve
+```
 
-# Create virtual environment
+#### Step 2: Create and Activate a Virtual Environment
+
+**On Linux / macOS:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+**On Windows (PowerShell):**
+```powershell
 python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+.venv\Scripts\Activate.ps1
+```
 
-# Install dependencies
+**On Windows (Command Prompt):**
+```cmd
+python -m venv .venv
+.venv\Scripts\activate.bat
+```
+
+#### Step 3: Install Dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run the Application
+#### Step 4: Run the Application
 ```bash
 python run.py
 ```
-Open your browser and navigate to:
+
+Now open your web browser and go to:
 👉 **`http://localhost:8000`**
 
 ---
 
-## 🐳 Docker Deployment
+### Method 2: Docker & Docker Compose (Zero Configuration)
 
-Run with one command via Docker Compose:
+If you have Docker and Docker Compose installed:
+
 ```bash
+# 1. Clone repository
+git clone https://github.com/junaidalishahgilgiti/LayaResolve.git
+cd LayaResolve
+
+# 2. Build and run in detached mode
 docker compose up -d
 ```
-The Docker image caches Hugging Face weights in a persistent Docker volume, so weights are only downloaded once.
+Access the application at: **`http://localhost:8000`**
+
+To stop the container:
+```bash
+docker compose down
+```
 
 ---
 
-## 🔌 REST API Documentation
+## 💻 How to Use LayaResolve
 
-### 1. Triage an Issue
+### 1. Web Dashboard
+* **Solver Studio**:
+  * Select any benchmark problem from the **Preset Problem Scenarios** dropdown, or paste your own error logs / ticket.
+  * Adjust the **Abstention Safety Threshold** (e.g., 60%). If Laya's certainty drops below this threshold, it automatically flags the problem for human review.
+  * Click **Run Laya Triage Only** for sub-second classification across all 5 decision heads.
+  * Click **Execute Full Solver Pipeline** to autonomously triage, route to the domain solver, and perform post-solution safety verification.
+* **Decision Inspector**:
+  * Experiment directly with Laya's raw `choice`, `score`, and `noul` heads by writing custom JSON states and questions.
+* **Benchmark & Eval**:
+  * Run batch evaluations across held-out datasets to measure domain accuracy, calibration reliability bins, and abstention rates.
+* **Architecture & Docs**:
+  * View system diagrams and implementation references.
+
+---
+
+### 2. Using the REST API
+
+The FastAPI server exposes clean endpoints for programmatic integration:
+
+#### A. Problem Triage Endpoint
 ```bash
-POST /api/triage
-Content-Type: application/json
-
-{
-  "title": "ZeroDivisionError in telemetry aggregator",
-  "description": "Worker crashed with division by zero in calculate_average(items) when array is empty.",
-  "min_confidence": 0.60
-}
+curl -X POST http://127.0.0.1:8000/api/triage \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "ZeroDivisionError in telemetry aggregator",
+    "description": "Analytics worker crashed with division by zero in calculate_average(items) when items list is empty.",
+    "min_confidence": 0.60
+  }'
 ```
 
-**Response:**
+**Example JSON Response:**
 ```json
 {
   "domain": "code_bug",
-  "domain_confidence": 0.974,
+  "domain_confidence": 0.676,
   "difficulty_label": "moderate",
   "urgency_label": "elevated",
   "is_sensitive": false,
   "needs_tools": false,
   "recommended_solver": "CodeBugSolver",
   "should_abstain": false,
-  "latency_ms": 215.4
+  "latency_ms": 210.5
 }
 ```
 
-### 2. Execute Full Solve Pipeline
+#### B. Full Resolution Pipeline
 ```bash
-POST /api/solve
-Content-Type: application/json
-
-{
-  "title": "502 Bad Gateway during morning traffic spike",
-  "description": "Gunicorn worker timeout (pid 4981) due to long DB queries under peak load.",
-  "min_confidence": 0.60
-}
+curl -X POST http://127.0.0.1:8000/api/solve \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "502 Bad Gateway during morning traffic spike",
+    "description": "Gunicorn worker timeout (pid 4981) due to long DB queries under peak load.",
+    "min_confidence": 0.60
+  }'
 ```
 
-### 3. Run Benchmark Evaluation Suite
+#### C. Run Batch Evaluation
 ```bash
-POST /api/eval
+curl -X POST http://127.0.0.1:8000/api/eval
 ```
-Computes domain classification accuracy, average calibrated confidence, selective abstention rate, and reliability bins over the test dataset.
 
 ---
 
-## 🧩 Adding a Custom Solver
+### 3. Using in Python Scripts Directly
 
-Adding a specialized solver takes 5 lines of code in `backend/solvers.py`:
+You can import and use the Laya engine directly in your own Python projects:
+
+```python
+from backend.models import ProblemSubmission
+from backend.engine import LayaDecisionEngine
+from backend.solvers import registry
+
+# 1. Initialize engine
+engine = LayaDecisionEngine()
+
+# 2. Define problem
+problem = ProblemSubmission(
+    title="KeyError in OAuth token exchange",
+    description="Backend raised KeyError: 'refresh_token' when authenticating user.",
+    min_confidence=0.60
+)
+
+# 3. Triage
+triage = engine.triage_problem(problem)
+print(f"Domain: {triage.domain} (Confidence: {triage.domain_confidence:.1%})")
+print(f"Recommended Solver: {triage.recommended_solver}")
+
+# 4. Solve
+solver = registry.get_solver(triage.recommended_solver)
+solution = solver.solve(problem, triage)
+print("Solution:", solution.solution_summary)
+
+# 5. Verify
+verification = engine.verify_solution(problem, solution.code_or_patch)
+print(f"Quality Score: {verification.verification_score}/100")
+```
+
+---
+
+## 🧪 Running Automated Unit Tests
+
+To run the automated test suite verifying engine initialization, triage accuracy, solver dispatch, and abstention gating:
+
+```bash
+python tests/test_engine.py
+```
+
+Expected output:
+```text
+Running LayaResolve verification tests...
+[OK] Engine initialized
+[OK] Triage test passed
+[OK] Solver & verification passed
+[OK] Abstention test passed
+All tests passed successfully!
+```
+
+---
+
+## 🧩 Adding Custom Solvers
+
+You can add custom domain solvers in 5 lines of Python code in `backend/solvers.py`:
 
 ```python
 from backend.solvers import BaseSolver, SolverExecutionResult, registry
@@ -165,13 +269,13 @@ class MyCustomSolver(BaseSolver):
     name = "MyCustomSolver"
 
     def solve(self, submission, triage) -> SolverExecutionResult:
-        # Your custom logic, external API call, or script execution
+        # Your custom logic, script execution, or API call
         return SolverExecutionResult(
             solver_name=self.name,
-            solution_summary="Custom resolution executed.",
-            detailed_steps=["Step 1...", "Step 2..."],
-            code_or_patch="echo 'resolved'",
-            execution_time_ms=12.0
+            solution_summary="Custom domain resolution completed.",
+            detailed_steps=["Parsed input", "Executed action"],
+            code_or_patch="# Auto-generated patch",
+            execution_time_ms=15.0
         )
 
 # Register with registry
@@ -180,8 +284,17 @@ registry.solvers["MyCustomSolver"] = MyCustomSolver()
 
 ---
 
-## 📜 License
+## 👤 Author & Contributor
 
-Distributed under the **Apache 2.0 License**. See [LICENSE](LICENSE) for details.
+* **Author**: **Junaid Ali Shah Gilgiti**
+* **GitHub**: [@junaidalishahgilgiti](https://github.com/junaidalishahgilgiti)
+* **Repository**: [https://github.com/junaidalishahgilgiti/LayaResolve](https://github.com/junaidalishahgilgiti/LayaResolve)
 
-Developed with the [Laya AI Model](https://huggingface.co/convaiinnovations/laya) by Convai Innovations.
+Contributions, feature requests, and feedback are welcome! Feel free to open an issue or pull request on GitHub.
+
+---
+
+## 📜 License & Acknowledgments
+
+* **License**: Distributed under the **Apache 2.0 License**. See [LICENSE](LICENSE) for details.
+* **Model**: Powered by the **Laya AI Model** (`convaiinnovations/laya`) by Convai Innovations.

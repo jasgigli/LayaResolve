@@ -1,414 +1,348 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LayaResolve | Autonomous Problem Triage & Multi-Solver Engine</title>
-    <meta
-      name="description"
-      content="Open-Source Autonomous Problem Triage, Dynamic Routing & Multi-Solver Engine powered by Laya AI decision models."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-    <div class="app-background">
-      <div class="mesh-glow mesh-1"></div>
-      <div class="mesh-glow mesh-2"></div>
-      <div class="mesh-glow mesh-3"></div>
-    </div>
-
-    <header class="navbar">
-      <div class="nav-container">
-        <div class="brand">
-          <div class="brand-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-              <polyline points="2 17 12 22 22 17"></polyline>
-              <polyline points="2 12 12 17 22 12"></polyline>
-            </svg>
-          </div>
-          <div class="brand-text">
-            <span class="brand-title">LayaResolve</span>
-            <span class="brand-badge">Decision & Multi-Solver OS</span>
-          </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LayaResolve | Autonomous Problem Triage & Multi-Solver Engine</title>
+  <meta name="description" content="Open-Source Problem Triage, Dynamic Routing & Multi-Solver Engine powered by Laya AI decision models. Developed by Junaid Ali Shah Gilgiti.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
         </div>
+        <div class="brand-text">
+          <span class="brand-title">LayaResolve</span>
+          <span class="brand-badge">Decision & Multi-Solver Engine</span>
+        </div>
+      </div>
 
-        <nav class="nav-links">
-          <button class="nav-tab active" data-tab="studio">
-            <span class="tab-icon">⚡</span> Solver Studio
-          </button>
-          <button class="nav-tab" data-tab="playground">
-            <span class="tab-icon">🔬</span> Decision Inspector
-          </button>
-          <button class="nav-tab" data-tab="eval">
-            <span class="tab-icon">📊</span> Benchmark & Eval
-          </button>
-          <button class="nav-tab" data-tab="docs">
-            <span class="tab-icon">📖</span> Architecture
-          </button>
-        </nav>
+      <nav class="nav-links">
+        <button class="nav-tab active" data-tab="studio">
+          <span class="tab-icon">⚡</span> Solver Studio
+        </button>
+        <button class="nav-tab" data-tab="playground">
+          <span class="tab-icon">🔬</span> Decision Inspector
+        </button>
+        <button class="nav-tab" data-tab="eval">
+          <span class="tab-icon">📊</span> Benchmark & Eval
+        </button>
+        <button class="nav-tab" data-tab="docs">
+          <span class="tab-icon">📖</span> Architecture & Docs
+        </button>
+      </nav>
 
+      <div class="nav-actions">
         <div class="system-status-chip">
           <div class="pulse-indicator"></div>
           <div class="status-info">
-            <span class="model-name" id="nav-model-name"
-              >convaiinnovations/laya</span
-            >
-            <span class="device-spec" id="nav-device-spec"
-              >CPU • Local Offline</span
-            >
+            <span class="model-name" id="nav-model-name">convaiinnovations/laya</span>
+            <span class="device-spec" id="nav-device-spec">Local Offline Inference</span>
+          </div>
+        </div>
+        <a href="https://github.com/junaidalishahgilgiti/LayaResolve" target="_blank" rel="noopener noreferrer" class="btn btn-github">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- TAB 1: SOLVER STUDIO -->
+    <section id="tab-studio" class="tab-panel active">
+      <div class="panel-header">
+        <div>
+          <h1>Autonomous Problem Solver Studio</h1>
+          <p class="subtitle">Experience high-speed, bounded decision making using non-autoregressive ModernBERT heads.</p>
+        </div>
+        <div class="quick-examples-dropdown">
+          <label for="example-selector">Preset Problem Scenarios:</label>
+          <select id="example-selector">
+            <option value="">-- Choose a benchmark scenario --</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- How It Works Compact Visual Stepper -->
+      <div class="workflow-stepper">
+        <div class="step-item active">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <strong>Input State</strong>
+            <span>Logs, tickets, code</span>
+          </div>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <strong>Laya Triage</strong>
+            <span>Choice, Score & Noul</span>
+          </div>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <strong>Autonomous Solver</strong>
+            <span>Code, DevOps, Security</span>
+          </div>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            <strong>Solution Verification</strong>
+            <span>Laya safety rubric</span>
           </div>
         </div>
       </div>
-    </header>
 
-    <main class="main-content">
-      <!-- TAB 1: SOLVER STUDIO -->
-      <section id="tab-studio" class="tab-panel active">
-        <div class="panel-header">
-          <div>
-            <h1>Autonomous Problem Solver Studio</h1>
-            <p class="subtitle">
-              Bounded non-autoregressive triage, dynamic solver routing, and
-              post-resolution verification.
-            </p>
-          </div>
-          <div class="quick-examples-dropdown">
-            <label for="example-selector">Preset Real-World Scenarios:</label>
-            <select id="example-selector">
-              <option value="">-- Choose a benchmark problem --</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="studio-grid">
-          <!-- Input Form Card -->
-          <div class="card glass-card input-card">
-            <div class="card-header">
-              <div class="card-title-group">
-                <span class="card-num">01</span>
-                <h2>Problem Statement</h2>
-              </div>
-              <span class="badge info-badge">State Input</span>
+      <div class="studio-grid">
+        <!-- Input Form Card -->
+        <div class="card clean-card input-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="step-badge">STEP 1</span>
+              <h2>Problem Statement</h2>
             </div>
-
-            <form id="problem-form">
-              <div class="form-group">
-                <label for="problem-title">Problem Title / Summary</label>
-                <input
-                  type="text"
-                  id="problem-title"
-                  placeholder="e.g. ZeroDivisionError in batch aggregator"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="problem-desc"
-                  >Technical Description / Logs / Query</label
-                >
-                <textarea
-                  id="problem-desc"
-                  rows="6"
-                  placeholder="Paste error stack traces, customer billing disputes, infrastructure alerts, or code snippets..."
-                  required
-                ></textarea>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group flex-1">
-                  <label for="min-confidence"
-                    >Abstention Threshold (Min Confidence)</label
-                  >
-                  <div class="slider-wrapper">
-                    <input
-                      type="range"
-                      id="min-confidence"
-                      min="40"
-                      max="95"
-                      value="60"
-                      step="5"
-                    />
-                    <span id="min-confidence-val" class="mono-tag">60%</span>
-                  </div>
-                </div>
-                <div class="form-group flex-1">
-                  <label for="force-solver"
-                    >Manual Solver Override (Optional)</label
-                  >
-                  <select id="force-solver">
-                    <option value="">Automatic (Laya Router Decision)</option>
-                    <option value="CodeBugSolver">CodeBugSolver</option>
-                    <option value="DevOpsIncidentSolver">
-                      DevOpsIncidentSolver
-                    </option>
-                    <option value="BillingAndAccountSolver">
-                      BillingAndAccountSolver
-                    </option>
-                    <option value="SecurityAuditSolver">
-                      SecurityAuditSolver
-                    </option>
-                    <option value="GeneralLogicSolver">
-                      GeneralLogicSolver
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="action-buttons">
-                <button
-                  type="button"
-                  id="btn-triage-only"
-                  class="btn btn-secondary"
-                >
-                  <span class="btn-icon">⚡</span> Run Laya Triage Only (~200ms)
-                </button>
-                <button
-                  type="submit"
-                  id="btn-solve-pipeline"
-                  class="btn btn-primary"
-                >
-                  <span class="btn-icon">🚀</span> Execute Full Solver Pipeline
-                </button>
-              </div>
-            </form>
+            <span class="badge info-badge">State Input</span>
           </div>
 
-          <!-- Live Laya Decision Telemetry Card -->
-          <div class="card glass-card telemetry-card">
-            <div class="card-header">
-              <div class="card-title-group">
-                <span class="card-num">02</span>
-                <h2>Laya Decision Engine Telemetry</h2>
-              </div>
-              <span id="triage-status-pill" class="badge ready-badge"
-                >Awaiting Input</span
-              >
+          <form id="problem-form">
+            <div class="form-group">
+              <label for="problem-title">Problem Title / Issue Summary</label>
+              <input type="text" id="problem-title" placeholder="e.g. ZeroDivisionError in batch aggregator" required>
             </div>
 
-            <div id="telemetry-empty" class="empty-state">
-              <div class="empty-icon">🧠</div>
-              <p>
-                Submit a problem or select a benchmark to view Laya's multi-head
-                classification distributions, calibrated confidence, and routing
-                decision in real-time.
-              </p>
+            <div class="form-group">
+              <label for="problem-desc">Technical Description / Logs / Query</label>
+              <textarea id="problem-desc" rows="5" placeholder="Paste error stack traces, customer billing disputes, infrastructure alerts, or code snippets..." required></textarea>
             </div>
 
-            <div id="telemetry-content" class="telemetry-content hidden">
-              <!-- Metric Highlights -->
-              <div class="metrics-row">
-                <div class="metric-pill">
-                  <span class="metric-label">Predicted Domain</span>
-                  <span id="metric-domain" class="metric-val highlight-violet"
-                    >-</span
-                  >
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="min-confidence">Abstention Safety Threshold</label>
+                <div class="slider-wrapper">
+                  <input type="range" id="min-confidence" min="40" max="95" value="60" step="5">
+                  <span id="min-confidence-val" class="mono-tag">60%</span>
                 </div>
-                <div class="metric-pill">
-                  <span class="metric-label">Urgency Score</span>
-                  <span id="metric-urgency" class="metric-val highlight-amber"
-                    >-</span
-                  >
-                </div>
-                <div class="metric-pill">
-                  <span class="metric-label">Complexity</span>
-                  <span id="metric-difficulty" class="metric-val highlight-cyan"
-                    >-</span
-                  >
-                </div>
-                <div class="metric-pill">
-                  <span class="metric-label">Decision Latency</span>
-                  <span id="metric-latency" class="metric-val highlight-emerald"
-                    >-</span
-                  >
-                </div>
+                <span class="help-text">If Laya's certainty is below this, it flags for human verification.</span>
               </div>
-
-              <!-- Abstention Warning Banner -->
-              <div id="abstention-banner" class="abstention-alert hidden">
-                <div class="alert-icon">⚠️</div>
-                <div class="alert-body">
-                  <strong>Selective Classification Abstention:</strong>
-                  <span id="abstention-msg"
-                    >Confidence below threshold. Human intervention
-                    suggested.</span
-                  >
-                </div>
-              </div>
-
-              <!-- Head 1: Choice (Domain) Distribution -->
-              <div class="distribution-block">
-                <div class="dist-header">
-                  <span class="dist-title"
-                    ><span class="tag-type choice-tag">CHOICE</span> Domain
-                    Classification Probabilities</span
-                  >
-                  <span id="domain-conf-badge" class="conf-badge"
-                    >Conf: 0%</span
-                  >
-                </div>
-                <div id="domain-bars" class="bars-container"></div>
-              </div>
-
-              <!-- Head 2 & 3: Score & Noul Estimates -->
-              <div class="dual-heads-row">
-                <div class="sub-dist-card">
-                  <div class="dist-header">
-                    <span class="dist-title"
-                      ><span class="tag-type score-tag">SCORE</span> Urgency
-                      Rubric</span
-                    >
-                  </div>
-                  <div id="urgency-bars" class="bars-container"></div>
-                </div>
-
-                <div class="sub-dist-card">
-                  <div class="dist-header">
-                    <span class="dist-title"
-                      ><span class="tag-type noul-tag">NOUL</span> Safety &
-                      Policy Propositions</span
-                    >
-                  </div>
-                  <div class="noul-indicators">
-                    <div class="noul-row">
-                      <span class="noul-label">High-Risk / Sensitive:</span>
-                      <div class="noul-track">
-                        <div id="noul-sens-bar" class="noul-fill"></div>
-                      </div>
-                      <span id="noul-sens-val" class="noul-pct mono-tag"
-                        >0%</span
-                      >
-                    </div>
-                    <div class="noul-row">
-                      <span class="noul-label">Requires External Tools:</span>
-                      <div class="noul-track">
-                        <div id="noul-tool-bar" class="noul-fill"></div>
-                      </div>
-                      <span id="noul-tool-val" class="noul-pct mono-tag"
-                        >0%</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Routing Target -->
-              <div class="routing-badge-card">
-                <span class="route-label">Dispatched Solver Agent:</span>
-                <span id="selected-solver-name" class="route-solver-chip"
-                  >CodeBugSolver</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Execution & Verification Results Section -->
-        <div id="resolution-section" class="resolution-container hidden">
-          <div class="card glass-card result-card">
-            <div class="card-header">
-              <div class="card-title-group">
-                <span class="card-num">03</span>
-                <h2>Autonomous Resolution & Patch</h2>
-              </div>
-              <div class="card-meta">
-                <span id="exec-time-pill" class="badge time-badge"
-                  >Execution: 0ms</span
-                >
-                <span id="verification-pill" class="badge verified-badge"
-                  >Verified by Laya</span
-                >
+              <div class="form-group flex-1">
+                <label for="force-solver">Solver Dispatcher</label>
+                <select id="force-solver">
+                  <option value="">Automatic (Laya Router Decision)</option>
+                  <option value="CodeBugSolver">CodeBugSolver</option>
+                  <option value="DevOpsIncidentSolver">DevOpsIncidentSolver</option>
+                  <option value="BillingAndAccountSolver">BillingAndAccountSolver</option>
+                  <option value="SecurityAuditSolver">SecurityAuditSolver</option>
+                  <option value="GeneralLogicSolver">GeneralLogicSolver</option>
+                </select>
+                <span class="help-text">Laya dynamically routes to the best solver.</span>
               </div>
             </div>
 
-            <div class="solution-grid">
-              <div class="solution-narrative">
-                <div class="summary-callout">
-                  <h3>Executive Summary</h3>
-                  <p id="solution-summary-text">...</p>
-                </div>
-
-                <div class="steps-container">
-                  <h3>Resolution Steps Executed</h3>
-                  <ul id="solution-steps-list" class="steps-list"></ul>
-                </div>
-
-                <!-- Laya Post-Solution Rubric Verification -->
-                <div class="verification-box">
-                  <div class="v-header">
-                    <span class="v-title"
-                      >🛡️ Laya Solution Guardrail & Verification</span
-                    >
-                    <span id="v-score-badge" class="v-score"
-                      >Quality Score: 95/100</span
-                    >
-                  </div>
-                  <p id="v-notes" class="v-text">
-                    Passed functional resolution check and safety constraints.
-                  </p>
-                </div>
-              </div>
-
-              <div class="solution-code-panel">
-                <div class="code-panel-header">
-                  <span>Remediation Patch / Command Sequence</span>
-                  <button id="btn-copy-code" class="btn btn-xs">
-                    Copy Code
-                  </button>
-                </div>
-                <pre><code id="solution-code" class="code-block"># Waiting for solver...</code></pre>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 2: LIVE MODEL INSPECTOR -->
-      <section id="tab-playground" class="tab-panel">
-        <div class="panel-header">
-          <div>
-            <h1>Laya Decision Model Inspector</h1>
-            <p class="subtitle">
-              Test Laya's three primitives (Choice, Score, Noul) with custom
-              states and arbitrary questions.
-            </p>
-          </div>
-        </div>
-
-        <div class="playground-layout">
-          <div class="card glass-card">
-            <div class="card-header">
-              <h2>Custom State & Questions Configuration</h2>
-              <button id="btn-load-preset-pg" class="btn btn-secondary btn-sm">
-                Load Support Preset
+            <div class="action-buttons">
+              <button type="button" id="btn-triage-only" class="btn btn-secondary">
+                <span class="btn-icon">⚡</span> Run Laya Triage Only (~200ms)
+              </button>
+              <button type="submit" id="btn-solve-pipeline" class="btn btn-primary">
+                <span class="btn-icon">🚀</span> Execute Full Solver Pipeline
               </button>
             </div>
-            <div class="form-group">
-              <label for="pg-state">Input State (JSON)</label>
-              <textarea id="pg-state" rows="6" class="code-input">
-{
+          </form>
+        </div>
+
+        <!-- Live Laya Decision Telemetry Card -->
+        <div class="card clean-card telemetry-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="step-badge">STEP 2</span>
+              <h2>Laya Decision Engine Telemetry</h2>
+            </div>
+            <span id="triage-status-pill" class="badge ready-badge">Awaiting Input</span>
+          </div>
+
+          <div id="telemetry-empty" class="empty-state">
+            <div class="empty-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.5">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+            </div>
+            <h3>No Problem Submitted Yet</h3>
+            <p>Select a preset scenario above or enter your own problem to view Laya's multi-head probability distributions and routing telemetry in real time.</p>
+          </div>
+
+          <div id="telemetry-content" class="telemetry-content hidden">
+            <!-- Metric Highlights -->
+            <div class="metrics-row">
+              <div class="metric-pill">
+                <span class="metric-label">Predicted Domain</span>
+                <span id="metric-domain" class="metric-val highlight-indigo">-</span>
+              </div>
+              <div class="metric-pill">
+                <span class="metric-label">Urgency Level</span>
+                <span id="metric-urgency" class="metric-val highlight-amber">-</span>
+              </div>
+              <div class="metric-pill">
+                <span class="metric-label">Difficulty</span>
+                <span id="metric-difficulty" class="metric-val highlight-teal">-</span>
+              </div>
+              <div class="metric-pill">
+                <span class="metric-label">Inference Latency</span>
+                <span id="metric-latency" class="metric-val highlight-emerald">-</span>
+              </div>
+            </div>
+
+            <!-- Abstention Warning Banner -->
+            <div id="abstention-banner" class="abstention-alert hidden">
+              <div class="alert-icon">⚠️</div>
+              <div class="alert-body">
+                <strong>Selective Classification Abstention:</strong>
+                <span id="abstention-msg">Confidence below threshold. Human intervention suggested.</span>
+              </div>
+            </div>
+
+            <!-- Head 1: Choice (Domain) Distribution -->
+            <div class="distribution-block">
+              <div class="dist-header">
+                <span class="dist-title"><span class="tag-type choice-tag">CHOICE</span> Domain Classification Probabilities</span>
+                <span id="domain-conf-badge" class="conf-badge">Conf: 0%</span>
+              </div>
+              <div id="domain-bars" class="bars-container"></div>
+            </div>
+
+            <!-- Head 2 & 3: Score & Noul Estimates -->
+            <div class="dual-heads-row">
+              <div class="sub-dist-card">
+                <div class="dist-header">
+                  <span class="dist-title"><span class="tag-type score-tag">SCORE</span> Urgency Rubric</span>
+                </div>
+                <div id="urgency-bars" class="bars-container"></div>
+              </div>
+
+              <div class="sub-dist-card">
+                <div class="dist-header">
+                  <span class="dist-title"><span class="tag-type noul-tag">NOUL</span> Safety & Policy Propositions</span>
+                </div>
+                <div class="noul-indicators">
+                  <div class="noul-row">
+                    <span class="noul-label">High-Risk / Sensitive:</span>
+                    <div class="noul-track">
+                      <div id="noul-sens-bar" class="noul-fill"></div>
+                    </div>
+                    <span id="noul-sens-val" class="noul-pct mono-tag">0%</span>
+                  </div>
+                  <div class="noul-row">
+                    <span class="noul-label">Requires External Tools:</span>
+                    <div class="noul-track">
+                      <div id="noul-tool-bar" class="noul-fill"></div>
+                    </div>
+                    <span id="noul-tool-val" class="noul-pct mono-tag">0%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Routing Target -->
+            <div class="routing-badge-card">
+              <span class="route-label">Dispatched Autonomous Solver:</span>
+              <span id="selected-solver-name" class="route-solver-chip">CodeBugSolver</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Execution & Verification Results Section -->
+      <div id="resolution-section" class="resolution-container hidden">
+        <div class="card clean-card result-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="step-badge">STEP 3 & 4</span>
+              <h2>Autonomous Resolution & Laya Verification</h2>
+            </div>
+            <div class="card-meta">
+              <span id="exec-time-pill" class="badge time-badge">Execution: 0ms</span>
+              <span id="verification-pill" class="badge verified-badge">Verified by Laya</span>
+            </div>
+          </div>
+
+          <div class="solution-grid">
+            <div class="solution-narrative">
+              <div class="summary-callout">
+                <h3>Executive Summary</h3>
+                <p id="solution-summary-text">...</p>
+              </div>
+
+              <div class="steps-container">
+                <h3>Resolution Steps Executed</h3>
+                <ul id="solution-steps-list" class="steps-list"></ul>
+              </div>
+
+              <!-- Laya Post-Solution Rubric Verification -->
+              <div class="verification-box">
+                <div class="v-header">
+                  <span class="v-title">🛡️ Laya Solution Guardrail & Verification</span>
+                  <span id="v-score-badge" class="v-score">Quality Score: 95/100</span>
+                </div>
+                <p id="v-notes" class="v-text">Passed functional resolution check and safety constraints.</p>
+              </div>
+            </div>
+
+            <div class="solution-code-panel">
+              <div class="code-panel-header">
+                <span>Remediation Patch / Command Sequence</span>
+                <button id="btn-copy-code" class="btn btn-xs">Copy Code</button>
+              </div>
+              <pre><code id="solution-code" class="code-block"># Waiting for solver...</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: LIVE MODEL INSPECTOR -->
+    <section id="tab-playground" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h1>Laya Decision Model Inspector</h1>
+          <p class="subtitle">Directly test Laya's three primitives (Choice, Score, Noul) with custom states and arbitrary questions.</p>
+        </div>
+      </div>
+
+      <div class="playground-layout">
+        <div class="card clean-card">
+          <div class="card-header">
+            <h2>Custom State & Questions Configuration</h2>
+            <button id="btn-load-preset-pg" class="btn btn-secondary btn-sm">Load Support Preset</button>
+          </div>
+          <div class="form-group">
+            <label for="pg-state">Input State (JSON)</label>
+            <textarea id="pg-state" rows="5" class="code-input">{
   "subject": "Duplicate charge on account",
   "body": "We were charged twice for our subscription. Please refund the duplicate or we will cancel immediately."
-}</textarea
-              >
-            </div>
-            <div class="form-group">
-              <label for="pg-questions">Typed Questions (JSON)</label>
-              <textarea id="pg-questions" rows="12" class="code-input">
-{
+}</textarea>
+          </div>
+          <div class="form-group">
+            <label for="pg-questions">Typed Questions (JSON)</label>
+            <textarea id="pg-questions" rows="11" class="code-input">{
   "intent": {
     "type": "choice",
     "instructions": "Which department owns this request?",
@@ -427,208 +361,167 @@
     "type": "noul",
     "instructions": "Does the customer threaten cancellation or chargeback?"
   }
-}</textarea
-              >
-            </div>
-            <button id="btn-run-pg" class="btn btn-primary w-full">
-              Run Custom Laya Inference
-            </button>
+}</textarea>
           </div>
-
-          <div class="card glass-card">
-            <div class="card-header">
-              <h2>Inference Response Output</h2>
-              <span id="pg-latency" class="badge ready-badge"
-                >Latency: 0ms</span
-              >
-            </div>
-            <pre><code id="pg-result" class="code-block json-view">// Output will appear here...</code></pre>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 3: BENCHMARK & EVALUATION -->
-      <section id="tab-eval" class="tab-panel">
-        <div class="panel-header">
-          <div>
-            <h1>Model Evaluation & Calibration Suite</h1>
-            <p class="subtitle">
-              As emphasized in the article: valid output format is not proof of
-              accuracy. Measure ECE and Abstention.
-            </p>
-          </div>
-          <button id="btn-run-eval" class="btn btn-primary">
-            <span class="btn-icon">⚡</span> Run Full Benchmark Suite
-          </button>
+          <button id="btn-run-pg" class="btn btn-primary w-full">Run Custom Laya Inference</button>
         </div>
 
-        <div id="eval-empty" class="empty-state">
-          <div class="empty-icon">📈</div>
-          <p>
-            Click "Run Full Benchmark Suite" to evaluate Laya across all
-            held-out scenarios and compute domain classification accuracy,
-            confidence calibration bins, and abstention rates.
-          </p>
+        <div class="card clean-card">
+          <div class="card-header">
+            <h2>Inference Response Output</h2>
+            <span id="pg-latency" class="badge ready-badge">Latency: 0ms</span>
+          </div>
+          <pre><code id="pg-result" class="code-block json-view">// Output will appear here...</code></pre>
         </div>
-
-        <div id="eval-results" class="eval-grid hidden">
-          <div class="card glass-card">
-            <div class="card-header">
-              <h2>Evaluation Metric Overview</h2>
-            </div>
-            <div class="stats-overview">
-              <div class="stat-card">
-                <span class="stat-num highlight-emerald" id="eval-acc">-</span>
-                <span class="stat-title">Domain Accuracy</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-num highlight-violet" id="eval-conf">-</span>
-                <span class="stat-title">Avg Confidence</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-num highlight-amber" id="eval-abstain"
-                  >-</span
-                >
-                <span class="stat-title">Abstention Rate</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-num highlight-cyan" id="eval-latency">-</span>
-                <span class="stat-title">Avg Latency (CPU)</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="card glass-card">
-            <div class="card-header">
-              <h2>Confidence Calibration Reliability</h2>
-            </div>
-            <p class="caption">
-              Tests whether predicted probabilities match observed accuracy
-              across confidence bins.
-            </p>
-            <div id="calibration-table" class="calibration-container"></div>
-          </div>
-
-          <div class="card glass-card col-span-2">
-            <div class="card-header">
-              <h2>Confusion Matrix (Predicted vs Expected)</h2>
-            </div>
-            <div id="confusion-matrix-view" class="matrix-container"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 4: ARCHITECTURE & DOCS -->
-      <section id="tab-docs" class="tab-panel">
-        <div class="panel-header">
-          <div>
-            <h1>LayaResolve Architecture & Open Source Guide</h1>
-            <p class="subtitle">
-              Complete technical overview, repository organization, and local
-              deployment guide.
-            </p>
-          </div>
-        </div>
-
-        <div class="docs-grid">
-          <div class="card glass-card">
-            <h2>Why Non-Autoregressive Decision Models?</h2>
-            <p>
-              Traditional generative LLMs (GPT-4, Claude) generate tokens
-              sequentially, which introduces:
-            </p>
-            <ul class="styled-list">
-              <li>
-                <strong>High Latency & Token Costs:</strong> Generating 500
-                tokens of JSON takes 2–4 seconds and costs credits.
-              </li>
-              <li>
-                <strong>Schema Drift & Hallucination:</strong> JSON output can
-                break, hallucinate keys, or invent nonexistent categories.
-              </li>
-              <li>
-                <strong>Unbounded State Spaces:</strong> Difficult to audit
-                confidence calibrated against fixed business rubrics.
-              </li>
-            </ul>
-            <p>
-              <strong>Laya</strong> passes state and questions through a
-              bidirectional ModernBERT encoder, outputting structured
-              probability distributions directly across pre-bounded answer heads
-              in a single forward pass.
-            </p>
-          </div>
-
-          <div class="card glass-card">
-            <h2>The 3 Decision Primitives</h2>
-            <div class="primitive-item">
-              <span class="tag-type choice-tag">CHOICE</span>
-              <div>
-                <strong>Categorical Selection:</strong> Selects from a fixed set
-                of named options with concrete criteria. Used for queue and
-                solver routing.
-              </div>
-            </div>
-            <div class="primitive-item">
-              <span class="tag-type score-tag">SCORE</span>
-              <div>
-                <strong>Ordinal Rubric:</strong> Rates inputs along an ordered
-                scale (e.g. routine &rarr; elevated &rarr; blocking). Returns
-                expected value and distribution.
-              </div>
-            </div>
-            <div class="primitive-item">
-              <span class="tag-type noul-tag">NOUL</span>
-              <div>
-                <strong>Proposition Probability:</strong> Evaluates the
-                probability P(true) of a stated binary hypothesis. Used for
-                safety and risk checks.
-              </div>
-            </div>
-          </div>
-
-          <div class="card glass-card col-span-2">
-            <h2>REST API Quick Reference</h2>
-            <div class="api-docs">
-              <div class="api-endpoint">
-                <span class="method post">POST</span> <code>/api/triage</code>
-                <p>
-                  Performs rapid Laya decision pass returning domain,
-                  difficulty, urgency, and abstention recommendations.
-                </p>
-              </div>
-              <div class="api-endpoint">
-                <span class="method post">POST</span> <code>/api/solve</code>
-                <p>
-                  Executes full end-to-end pipeline: Triage &rarr; Route &rarr;
-                  Domain Solver &rarr; Laya Solution Verification.
-                </p>
-              </div>
-              <div class="api-endpoint">
-                <span class="method post">POST</span> <code>/api/eval</code>
-                <p>
-                  Runs batch evaluation suite over held-out datasets to measure
-                  accuracy, calibration ECE, and latency.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-container">
-        <span
-          >Built with <strong>Laya AI</strong> by Convai Innovations • Open
-          Source under Apache 2.0</span
-        >
-        <span class="footer-specs" id="footer-specs"
-          >Windows 10 • Intel i5 CPU • PyTorch 2.13</span
-        >
       </div>
-    </footer>
+    </section>
 
-    <script src="./app.js"></script>
-  </body>
+    <!-- TAB 3: BENCHMARK & EVALUATION -->
+    <section id="tab-eval" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h1>Model Evaluation & Calibration Suite</h1>
+          <p class="subtitle">As emphasized in the research article: a valid output shape is not proof of accuracy. Measure ECE and Abstention.</p>
+        </div>
+        <button id="btn-run-eval" class="btn btn-primary">
+          <span class="btn-icon">⚡</span> Run Full Benchmark Suite
+        </button>
+      </div>
+
+      <div id="eval-empty" class="empty-state">
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.5">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        </div>
+        <h3>Evaluate Model Quality & Calibration</h3>
+        <p>Click "Run Full Benchmark Suite" to evaluate Laya across all held-out scenarios and compute domain classification accuracy, confidence calibration bins, and abstention rates.</p>
+      </div>
+
+      <div id="eval-results" class="eval-grid hidden">
+        <div class="card clean-card">
+          <div class="card-header">
+            <h2>Evaluation Metrics Overview</h2>
+          </div>
+          <div class="stats-overview">
+            <div class="stat-card">
+              <span class="stat-num highlight-emerald" id="eval-acc">-</span>
+              <span class="stat-title">Domain Accuracy</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num highlight-indigo" id="eval-conf">-</span>
+              <span class="stat-title">Avg Confidence</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num highlight-amber" id="eval-abstain">-</span>
+              <span class="stat-title">Abstention Rate</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num highlight-teal" id="eval-latency">-</span>
+              <span class="stat-title">Avg Latency (CPU)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card clean-card">
+          <div class="card-header">
+            <h2>Confidence Calibration Reliability</h2>
+          </div>
+          <p class="caption">Tests whether predicted probabilities match observed accuracy across confidence bins.</p>
+          <div id="calibration-table" class="calibration-container"></div>
+        </div>
+
+        <div class="card clean-card col-span-2">
+          <div class="card-header">
+            <h2>Confusion Matrix (Predicted vs Expected)</h2>
+          </div>
+          <div id="confusion-matrix-view" class="matrix-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: ARCHITECTURE & DOCS -->
+    <section id="tab-docs" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h1>LayaResolve Architecture & Open Source Guide</h1>
+          <p class="subtitle">Complete technical overview, repository organization, and local deployment guide.</p>
+        </div>
+      </div>
+
+      <div class="docs-grid">
+        <div class="card clean-card">
+          <h2>Why Non-Autoregressive Decision Models?</h2>
+          <p>Traditional generative LLMs (like GPT-4 or Claude) generate tokens sequentially, which introduces:</p>
+          <ul class="styled-list">
+            <li><strong>High Latency & Token Costs:</strong> Generating 500 tokens of JSON takes 2–4 seconds and consumes costly cloud API credits.</li>
+            <li><strong>Schema Drift & Hallucination:</strong> Output can break, hallucinate non-existent JSON keys, or invent invalid category labels.</li>
+            <li><strong>Uncalibrated Confidence:</strong> Generative models struggle to provide trustworthy probability distributions over operational policies.</li>
+          </ul>
+          <p><strong>Laya</strong> passes state and questions through a bidirectional ModernBERT encoder, outputting structured probability distributions directly across pre-bounded answer heads in a single forward pass.</p>
+        </div>
+
+        <div class="card clean-card">
+          <h2>The 3 Decision Primitives</h2>
+          <div class="primitive-item">
+            <span class="tag-type choice-tag">CHOICE</span>
+            <div>
+              <strong>Categorical Selection:</strong> Selects from a fixed set of named options with concrete criteria. Used for queue and solver routing.
+            </div>
+          </div>
+          <div class="primitive-item">
+            <span class="tag-type score-tag">SCORE</span>
+            <div>
+              <strong>Ordinal Rubric:</strong> Rates inputs along an ordered scale (e.g. routine &rarr; elevated &rarr; blocking). Returns expected value and distribution.
+            </div>
+          </div>
+          <div class="primitive-item">
+            <span class="tag-type noul-tag">NOUL</span>
+            <div>
+              <strong>Proposition Probability:</strong> Evaluates the probability P(true) of a stated binary hypothesis. Used for safety and risk checks.
+            </div>
+          </div>
+        </div>
+
+        <div class="card clean-card col-span-2">
+          <h2>REST API Quick Reference</h2>
+          <div class="api-docs">
+            <div class="api-endpoint">
+              <span class="method post">POST</span> <code>/api/triage</code>
+              <p>Performs rapid Laya decision pass returning domain, difficulty, urgency, and abstention recommendations.</p>
+            </div>
+            <div class="api-endpoint">
+              <span class="method post">POST</span> <code>/api/solve</code>
+              <p>Executes full end-to-end pipeline: Triage &rarr; Route &rarr; Domain Solver &rarr; Laya Solution Verification.</p>
+            </div>
+            <div class="api-endpoint">
+              <span class="method post">POST</span> <code>/api/eval</code>
+              <p>Runs batch evaluation suite over held-out datasets to measure accuracy, calibration ECE, and latency.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Clean, Professional Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <strong>LayaResolve</strong> — Developed by <strong>Junaid Ali Shah Gilgiti</strong>
+        <span class="separator">•</span>
+        Powered by <strong>Laya AI</strong> by Convai Innovations (Apache 2.0)
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/junaidalishahgilgiti/LayaResolve" target="_blank" rel="noopener noreferrer">
+          GitHub: junaidalishahgilgiti/LayaResolve
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
 </html>

@@ -53,19 +53,34 @@ class MEMORYSTATUSEX(ctypes.Structure):
     ]
 
 def get_system_specs() -> Dict[str, Any]:
-    stat = MEMORYSTATUSEX()
-    stat.dwLength = ctypes.sizeof(MEMORYSTATUSEX)
-    ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(stat))
+    import torch
+    device_name = f"GPU ({torch.cuda.get_device_name(0)})" if torch.cuda.is_available() else "CPU (PyTorch Engine)"
+    
+    # Cross-platform memory & disk detection
+    total_ram = 0.0
+    avail_ram = 0.0
+    free_disk = 0.0
+    try:
+        if os.name == 'nt':
+            stat = MEMORYSTATUSEX()
+            stat.dwLength = ctypes.sizeof(MEMORYSTATUSEX)
+            ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(stat))
+            total_ram = round(stat.ullTotalPhys / (1024**3), 2)
+            avail_ram = round(stat.ullAvailPhys / (1024**3), 2)
+        disk_info = shutil.disk_usage(os.getcwd())
+        free_disk = round(disk_info.free / (1024**3), 2)
+    except Exception:
+        pass
 
-    c_disk = shutil.disk_usage("C:")
     return {
-        "os": platform.platform(),
-        "total_ram_gb": round(stat.ullTotalPhys / (1024**3), 2),
-        "available_ram_gb": round(stat.ullAvailPhys / (1024**3), 2),
-        "disk_free_gb": round(c_disk.free / (1024**3), 2),
-        "device": "CPU (Intel Core i5)",
+        "os": platform.system() + " " + platform.release(),
+        "total_ram_gb": total_ram,
+        "available_ram_gb": avail_ram,
+        "disk_free_gb": free_disk,
+        "device": device_name,
         "model_loaded": "convaiinnovations/laya (ModernBERT-large, ~421M params)",
-        "runtime": "Local Offline PyTorch"
+        "runtime": "Local Offline Inference",
+        "author": "Junaid Ali Shah Gilgiti"
     }
 
 @app.get("/api/status")
