@@ -80,7 +80,9 @@ def get_system_specs() -> Dict[str, Any]:
         "device": device_name,
         "model_loaded": "convaiinnovations/laya (ModernBERT-large, ~421M params)",
         "runtime": "Local Offline Inference",
-        "author": "Junaid Ali Shah Gilgiti"
+        "author": "Junaid Ali Shah Gilgiti",
+        "github": "https://github.com/jasgigli",
+        "repository": "https://github.com/jasgigli/LayaResolve"
     }
 
 @app.get("/api/status")
