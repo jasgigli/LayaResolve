@@ -1,0 +1,74 @@
+[
+  {
+    "id": "prob-001",
+    "title": "ZeroDivisionError in telemetry aggregator",
+    "description": "Our batch analytics worker crashed with: ZeroDivisionError: division by zero in calculate_average(metrics) at line 84 when processing an empty device metric stream.",
+    "context": {"environment": "production", "service": "worker-telemetry"},
+    "expected_domain": "code_bug",
+    "expected_urgency": "elevated",
+    "is_critical": false
+  },
+  {
+    "id": "prob-002",
+    "title": "502 Bad Gateway during morning traffic spike",
+    "description": "Nginx returns 502 Bad Gateway intermittently. Gunicorn error log reports: [CRITICAL] WORKER TIMEOUT (pid:4981) due to long-running DB queries during peak user login.",
+    "context": {"cluster": "us-east-1", "traffic_rps": 12500},
+    "expected_domain": "devops_infra",
+    "expected_urgency": "blocking",
+    "is_critical": true
+  },
+  {
+    "id": "prob-003",
+    "title": "Duplicate charge on credit card for annual plan",
+    "description": "We noticed that our corporate card was billed twice ($1,200 x 2) on October 1st for the Enterprise license. Please refund the duplicate transaction immediately or we will initiate a chargeback.",
+    "context": {"account_tier": "enterprise", "mrr": 1200},
+    "expected_domain": "billing_account",
+    "expected_urgency": "elevated",
+    "is_critical": false
+  },
+  {
+    "id": "prob-004",
+    "title": "SQL Injection vulnerability found in user search API",
+    "description": "Security audit flagged endpoint /api/users/search: raw string interpolation is used: SELECT * FROM users WHERE name = ' + user_query + '. Needs immediate remediation.",
+    "context": {"cve_flag": true, "compliance": "SOC2"},
+    "expected_domain": "security_threat",
+    "expected_urgency": "blocking",
+    "is_critical": true
+  },
+  {
+    "id": "prob-005",
+    "title": "Out of Memory (OOMKilled) in Redis Cache Pod",
+    "description": "Kubernetes cluster reported CrashLoopBackOff on redis-cache-0 with exit code 137 (OOMKilled). Memory usage spiked from 2GB to 8GB in 15 minutes.",
+    "context": {"infra": "k8s-prod", "nodes": 12},
+    "expected_domain": "devops_infra",
+    "expected_urgency": "blocking",
+    "is_critical": true
+  },
+  {
+    "id": "prob-006",
+    "title": "KeyError: 'refresh_token' when exchanging OAuth code",
+    "description": "Authentication gateway crashes with KeyError: 'refresh_token' when authenticating users via Google OAuth who did not request offline access.",
+    "context": {"service": "auth-service"},
+    "expected_domain": "code_bug",
+    "expected_urgency": "routine",
+    "is_critical": false
+  },
+  {
+    "id": "prob-007",
+    "title": "Inquiry regarding student discount options",
+    "description": "Hi team, I am a university student looking to use your platform for my thesis project. Do you offer an academic discount or free tier for students?",
+    "context": {"user_type": "prospective"},
+    "expected_domain": "billing_account",
+    "expected_urgency": "routine",
+    "is_critical": false
+  },
+  {
+    "id": "prob-008",
+    "title": "API Secret Key accidentally committed to public repo",
+    "description": "Our AWS root credentials and Stripe secret key were committed into a public GitHub repository in commit 9f12ab. Need emergency rotation and security checklist.",
+    "context": {"exposure": "public_github"},
+    "expected_domain": "security_threat",
+    "expected_urgency": "blocking",
+    "is_critical": true
+  }
+]

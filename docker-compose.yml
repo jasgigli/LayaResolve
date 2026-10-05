@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  layaresolve:
+    build: .
+    container_name: layaresolve-engine
+    ports:
+      - "8000:8000"
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+    restart: unless-stopped
+    environment:
+      - HF_HUB_ENABLE_HF_TRANSFER=0
+
+volumes:
+  hf_cache:
